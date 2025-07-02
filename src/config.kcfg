@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+                          http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile name="whatsuprc" />
+  <group name="General">
+    <entry name="StorePerm" type="bool">
+      <label>Allow to store permissions on disk</label>
+      <default>true</default>
+    </entry>
+    <entry name="ZoomFactor" type="Int">
+      <label>The ZoomFactor for the webview</label>
+      <default>100</default>
+    </entry>
+    <entry name="DrawerExpanded" type="bool">
+      <label>If the left global drawer be expanded or collapsed</label>
+      <default>true</default>
+    </entry>
+  </group>
+  <group name="Permissions">
+    <entry name="AllowMicrophone" type="bool">
+      <label>Allow access to microphone</label>
+      <default>false</default>
+    </entry>
+    <entry name="AllowCamera" type="bool">
+      <label>Allow access to Camera</label>
+      <default>false</default>
+    </entry>
+  </group>
+</kcfg>
+
