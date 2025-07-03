@@ -13,6 +13,7 @@
 #include <KAboutData>
 
 #include "config.h"
+#include "downloadmanager.h"
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -42,6 +43,8 @@ int main(int argc, char *argv[]) {
 
 
     auto *profile = new QQuickWebEngineProfile(QStringLiteral("whatsup"), &app);
+
+    QObject::connect(profile, &QQuickWebEngineProfile::downloadRequested, DownloadManager::self(), &DownloadManager::downloadFile);
 
     auto config = Config::self();
 
