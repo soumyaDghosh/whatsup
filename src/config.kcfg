@@ -28,5 +28,14 @@
       <default>false</default>
     </entry>
   </group>
+  <group name="Downloads">
+    <entry name="AskDownloadPath" type="bool">
+      <label>Ask for download path everytime</label>
+      <default>true</default>
+    </entry>
+    <entry name="DownloadPath" type="string">
+      <label>Default download path</label>
+    </entry>
+  </group>
 </kcfg>
 

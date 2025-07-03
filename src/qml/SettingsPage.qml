@@ -6,6 +6,7 @@
 import QtQuick
 import QtQuick.Controls as Controls
 import QtQuick.Layouts
+import Qt.labs.platform
 
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.formcard as FormCard
@@ -56,6 +57,36 @@ FormCard.FormCardPage {
                         spinbox.focus = false;
                     }
                 }
+            }
+        }
+
+        FormCard.FormDelegateSeparator {}
+
+        FormCard.FormSwitchDelegate {
+            id: askDownload
+            text: i18n("Ask before download")
+            description: i18n("Always ask where to download files")
+            checked: Config.askDownloadPath
+            onCheckedChanged: {
+                Config.askDownloadPath = checked;
+                Config.save();
+            }
+        }
+        
+        FormCard.FormDelegateSeparator {
+            above: askDownload
+            below: downloadPath
+            visible: !Config.askDownloadPath
+        }
+
+        FormCard.FormTextDelegate {
+            id: downloadPath
+            visible: !Config.askDownloadPath
+            text: i18n("Auto-Download Path")
+            description: Config.downloadPath
+            trailing: Controls.Button {
+                icon.name: "folder-add"
+                onClicked: folderDialog.open();
             }
         }
     }
@@ -148,6 +179,16 @@ FormCard.FormCardPage {
 
         function onConfigChanged() {
             webEngineView.reload();
+        }
+    }
+
+    FolderDialog {
+        id: folderDialog
+        currentFolder: "file://" + Config.downloadPath
+        onAccepted: {
+            var path = URL(folder);
+            Config.downloadPath = path.pathname;
+            Config.save();
         }
     }
 }

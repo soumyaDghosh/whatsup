@@ -48,6 +48,10 @@ int main(int argc, char *argv[]) {
 
     auto config = Config::self();
 
+    if (config->downloadPath().isEmpty()) {
+        config->setDownloadPath(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation).append("/WhatsUp"_L1));
+    }
+
     if (config->storePerm()) {
         profile->setPersistentPermissionsPolicy(QQuickWebEngineProfile::PersistentPermissionsPolicy::StoreOnDisk);
     }

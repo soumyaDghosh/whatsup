@@ -9,6 +9,10 @@ class DownloadManager : public QObject
     QML_SINGLETON
 
 public:
-    Q_INVOKABLE void downloadFile(QWebEngineDownloadRequest *request);
+    Q_SLOT void downloadFile(QWebEngineDownloadRequest *request);
     static DownloadManager *self();
+
+private:
+    static const QPair<QString, QString> getDownloadPath(const QString &mimeString);
+    static const QString askDownloadPath(QWebEngineDownloadRequest *request);
 };
