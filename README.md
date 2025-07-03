@@ -23,7 +23,7 @@ All the listed packages are from the KDE Neon repo
 
 # TODO:
 
-[] Add support for multiple profiles
-[] Add support for notifications
-[] Implement Download manager
-[] Optimize performance of the web view
+- [ ] Add support for multiple profiles
+- [ ] Add support for notifications
+- [ ] Implement Download manager
+- [ ] Optimize performance of the web view
