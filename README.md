@@ -7,6 +7,9 @@ A WhatsApp wrapper using QtWebEngine, and Kirigami to make it look nice with KDE
 ### WhatsUp main window
 ![](data/screenshots/whatsup-main-window.png)
 
+### WhatsUp with expanded sidebar
+![](data/screenshots/whatsup-with-expanded-side-bar.png)
+
 ### Whatsup asking for permission
 ![](data/screenshots/whatsup-asking-for-permission.png)
 
