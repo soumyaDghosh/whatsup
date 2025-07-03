@@ -2,6 +2,17 @@
 
 A WhatsApp wrapper using QtWebEngine, and Kirigami to make it look nice with KDE.
 
+# Screenshots
+
+### WhatsUp main window
+![](data/screenshots/whatsup-main-window.png)
+
+### Whatsup asking for permission
+![](data/screenshots/whatsup-asking-for-permission.png)
+
+### Whatsup settings window
+![](data/screenshots/whatsup-settings-page.png)
+
 # Building from source
 
 Currently it's not possible to build from source without the libraries from latest commmit of KDE Framework, as there are some specific patches of Kirigami Addons being used. [1](https://invent.kde.org/libraries/kirigami-addons/-/merge_requests/371) [2](https://invent.kde.org/libraries/kirigami-addons/-/merge_requests/373)
