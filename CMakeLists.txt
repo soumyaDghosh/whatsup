@@ -12,13 +12,15 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings NO_POLICY_SCOPE)
+include(KDEClangFormat)
+include(KDEGitCommitHooks)
 include(ECMFindQmlModule)
 include(ECMQmlModule)
+include(ECMDeprecationSettings)
 
 find_package(Qt6 REQUIRED COMPONENTS
     Core
     Quick
-    Test
     Gui
     QuickControls2
     Widgets
@@ -37,6 +39,8 @@ find_package(KF6 REQUIRED COMPONENTS
 
 
 ecm_find_qmlmodule(org.kde.kirigami REQUIRED)
-ecm_find_qmlmodule(org.kde.kirigamiaddons REQUIRED)
 
 add_subdirectory(src)
+
+kde_configure_git_pre_commit_hook(CHECKS CLANG_FORMAT)
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
