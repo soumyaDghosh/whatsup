@@ -11,6 +11,8 @@ import QtWebEngine
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.components as Components
 
+import io.github.soumyadghosh.whatsup
+
 Components.MessageDialog {
     property string name
     property webEnginePermission permission
