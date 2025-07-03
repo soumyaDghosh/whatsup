@@ -5,6 +5,8 @@
 add_library(whatsup_static STATIC)
 
 target_sources(whatsup_static PRIVATE
+    downloadmanager.h
+    downloadmanager.cpp
     permissionmanager.h
     permissionmanager.cpp
 )

@@ -12,14 +12,13 @@ import QtWebEngine
 
 import io.github.soumyadghosh.whatsup
 
-ColumnLayout {
+Controls.Page {
     property alias view: webEngineView
     readonly property string originUrl: "https://web.whatsapp.com"
     WebEngineView {
         id: webEngineView
         focus: true
-        Layout.fillWidth: true
-        Layout.fillHeight: true
+        anchors.fill: parent
         url: originUrl
         lifecycleState: WebEngineView.LifecycleState.Active
         profile: webProfile
@@ -77,33 +76,12 @@ ColumnLayout {
             webEngineView.visible = true;
         }
     }
+
+    // Connections {
+    //     target: webProfile
+
+    //     function onDownloadRequested(request) {
+    //         DownloadManager.downloadFile(request, originUrl);
+    //     }
+    // }
 }
-
-// WebEngineView {
-//     id: webEngineView
-//     anchors.fill: parent
-//     url: "https://web.whatsapp.com"
-//     // profile.httpUserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
-//     profile: webProfile
-
-//     onRenderProcessTerminated: (status, code) => {
-//         console.log("WebEngine process terminated:", status, "Exit code:", code);
-//         if (status !== WebEngineView.NormalTerminationStatus) {
-//             webview.reload(); // or show an error page
-//         }
-//     }
-
-//     onContextMenuRequested: (request) => {request.accepted = true;}
-
-//     onLoadingChanged: (loadingInfo) => {
-//         console.log(loadingInfo);
-//         if(loadingInfo.status === WebEngineView.LoadFailedStatus) {
-//             console.log(webview.visible);
-//             reloadButton.visible = true;
-//         }
-//     }
-
-//     Component.onCompleted: {
-//         console.log(webProfile.persistentStoragePath);
-//     }
-// }

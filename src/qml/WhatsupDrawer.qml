@@ -43,6 +43,23 @@ Kirigami.GlobalDrawer {
         }
 
         Delegates.RoundedItemDelegate {
+            id: homeButton
+            Layout.fillWidth: true
+            checkable: true
+            Controls.ButtonGroup.group: navGroup
+            Controls.ToolTip.text: i18n("Home")
+            Controls.ToolTip.visible: hovered
+            text: drawerExpanded ? Controls.ToolTip.text : ""
+            icon.name: "user-home-symbolic"
+            icon.width: Kirigami.Units.iconSizes.medium
+            icon.height: Kirigami.Units.iconSizes.medium
+            onClicked: {
+                pageStack.clear();
+                pageStack.push(webEnginePage);
+            }
+        }
+
+        Delegates.RoundedItemDelegate {
             Layout.fillWidth: true
             Controls.ToolTip.text: i18n("Toggle View")
             Controls.ToolTip.visible: hovered
@@ -95,24 +112,15 @@ Kirigami.GlobalDrawer {
             icon.width: Kirigami.Units.iconSizes.medium
             icon.height: Kirigami.Units.iconSizes.medium
             onClicked: webEngineView.zoomFactor = Config.zoomFactor / 100;
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
-            }
         }
 
         Item {
             Layout.fillHeight: true
         }
 
-        Component {
-            id: settings
-            SettingsPage {}
-        }
-
         Delegates.RoundedItemDelegate {
             autoExclusive: true
+            checkable: true
             Controls.ButtonGroup.group: navGroup
             Layout.fillWidth: true
             Controls.ToolTip.visible: hovered
@@ -121,11 +129,15 @@ Kirigami.GlobalDrawer {
             icon.name: "settings-configure"
             icon.width: Kirigami.Units.iconSizes.medium
             icon.height: Kirigami.Units.iconSizes.medium
-            onClicked: pageStack.layers.push(settings);
+            onClicked: {
+                pageStack.clear();
+                pageStack.push(Qt.resolvedUrl("SettingsPage.qml"), {
+                    webEngineView
+                });
+            }
         }
 
         Delegates.RoundedItemDelegate {
-            Controls.ButtonGroup.group: navGroup
             Layout.fillWidth: true
             Controls.ToolTip.visible: hovered
             Controls.ToolTip.text: drawerExpanded ? i18n("Collapse Sidebar") : i18n("Expand Sidebar")
@@ -138,5 +150,9 @@ Kirigami.GlobalDrawer {
                 Config.save();
             }
         }
+    }
+
+    Component.onCompleted: {
+        homeButton.checked = true;
     }
 }

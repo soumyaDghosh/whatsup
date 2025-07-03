@@ -14,6 +14,7 @@ import io.github.soumyadghosh.whatsup
 
 FormCard.FormCardPage {
     id: root
+    property var webEngineView
 
     title: i18nc("@title:window", "Settings")
 
