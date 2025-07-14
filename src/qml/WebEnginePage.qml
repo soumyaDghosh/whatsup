@@ -21,7 +21,7 @@ Controls.Page {
         anchors.fill: parent
         url: originUrl
         lifecycleState: WebEngineView.LifecycleState.Active
-        profile: webProfile
+        profile: webProfile.profile
         zoomFactor: Config.zoomFactor / 100
 
         onRenderProcessTerminated: (status, code) => {

@@ -24,6 +24,38 @@ FormCard.FormCardPage {
     }
 
     FormCard.FormCard {
+        FormCard.FormComboBoxDelegate {
+            text: i18n("Select an User Agent")
+            model: uaManager
+            textRole: "display"
+            Component.onCompleted: {
+                var agentString = webEngineView.profile.httpUserAgent;
+                var index = uaManager.containsUserAgent(agentString);
+                if (index !== -1) {
+                    Config.uAIndex = index;
+                }
+                currentIndex = Config.uAIndex;
+            }
+            onActivated: idx => {
+                webProfile.setProfile(uaManager.getUserAgent(idx));
+                Config.uAIndex = idx;
+                Config.save();
+            }
+        }
+
+        FormCard.FormDelegateSeparator {}
+
+        FormCard.FormTextDelegate {
+            text: i18n("Refresh User Agents List")
+            icon.name: "view-refresh"
+            trailing: Controls.Button {
+                icon.name: "download"
+                onClicked: uaManager.getUserAgentsFile();
+            }
+        }
+
+        FormCard.FormDelegateSeparator {}
+
         FormCard.AbstractFormDelegate {
             id: pageZoomFactor
             contentItem: RowLayout {
@@ -178,7 +210,17 @@ FormCard.FormCardPage {
         target: Config
 
         function onConfigChanged() {
+            Config.read;
+            Config.load;
             webEngineView.reload();
+        }
+    }
+
+    Connections {
+        target: uaManager
+
+        function onUserAgentsChanged(message: string) {
+            showPassiveNotification(message, 3000);
         }
     }
 
@@ -186,7 +228,7 @@ FormCard.FormCardPage {
         id: folderDialog
         currentFolder: "file://" + Config.downloadPath
         onAccepted: {
-            var path = URL(folder);
+            var path = new URL(folder);
             Config.downloadPath = path.pathname;
             Config.save();
         }

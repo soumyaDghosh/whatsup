@@ -3,17 +3,20 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-#include <QApplication>
-#include <QtWebEngineQuick>
-#include <QQuickWebEngineProfile>
+#include <KAboutData>
 #include <KLocalizedQmlContext>
 #include <KLocalizedString>
-#include <QtQml>
+#include <QApplication>
 #include <QQuickStyle>
-#include <KAboutData>
+#include <QQuickWebEngineProfile>
+#include <QUaParser>
+#include <QtQml>
+#include <QtWebEngineQuick>
 
 #include "config.h"
 #include "downloadmanager.h"
+#include "profilemanager.h"
+#include "useragentmanager.h"
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -41,10 +44,8 @@ int main(int argc, char *argv[]) {
 
     KAboutData::setApplicationData(about);
 
-
-    auto *profile = new QQuickWebEngineProfile(QStringLiteral("whatsup"), &app);
-
-    QObject::connect(profile, &QQuickWebEngineProfile::downloadRequested, DownloadManager::self(), &DownloadManager::downloadFile);
+    auto *profile = new ProfileManager(&app);
+    QObject::connect(profile->getProfile(), &QQuickWebEngineProfile::downloadRequested, DownloadManager::self(), &DownloadManager::downloadFile);
 
     auto config = Config::self();
 
@@ -52,16 +53,18 @@ int main(int argc, char *argv[]) {
         config->setDownloadPath(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation).append("/WhatsUp"_L1));
     }
 
-    if (config->storePerm()) {
-        profile->setPersistentPermissionsPolicy(QQuickWebEngineProfile::PersistentPermissionsPolicy::StoreOnDisk);
+    QUserAgent *userAgent = nullptr;
+    auto uaManager = new UserAgentManager();
+
+    if (uaManager->userAgents().count() > 0) {
+        userAgent = uaManager->userAgents().at(config->uAIndex());
     }
 
-    profile->setHttpUserAgent(
-        QStringLiteral("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36")
-    );
+    profile->setProfile(userAgent);
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty(QStringLiteral("webProfile"), profile);
+    engine.rootContext()->setContextProperty(QStringLiteral("uaManager"), uaManager);
 
     KLocalization::setupLocalizedContext(&engine);
     engine.loadFromModule(QStringLiteral("io.github.soumyadghosh.whatsup"), QStringLiteral("Main"));

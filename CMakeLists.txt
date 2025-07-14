@@ -20,8 +20,10 @@ include(ECMDeprecationSettings)
 
 find_package(Qt6 REQUIRED COMPONENTS
     Core
+    Concurrent
     Quick
     Gui
+    Network
     QuickControls2
     Widgets
     WebEngineQuick
@@ -37,10 +39,12 @@ find_package(KF6 REQUIRED COMPONENTS
     KirigamiAddons
 )
 
+find_package(uap-qt CONFIG REQUIRED)
 
 ecm_find_qmlmodule(org.kde.kirigami REQUIRED)
 
 add_subdirectory(src)
+add_subdirectory(data)
 
 kde_configure_git_pre_commit_hook(CHECKS CLANG_FORMAT)
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

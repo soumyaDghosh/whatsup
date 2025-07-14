@@ -9,6 +9,10 @@ target_sources(whatsup_static PRIVATE
     downloadmanager.cpp
     permissionmanager.h
     permissionmanager.cpp
+    profilemanager.h
+    profilemanager.cpp
+    useragentmanager.h
+    useragentmanager.cpp
 )
 
 kconfig_target_kcfg_file(whatsup_static FILE config.kcfg CLASS_NAME Config MUTATORS GENERATE_PROPERTIES GENERATE_MOC DEFAULT_VALUE_GETTERS PARENT_IN_CONSTRUCTOR QML_REGISTRATION SINGLETON)
@@ -28,9 +32,11 @@ ecm_add_qml_module(whatsup_static
 target_include_directories(whatsup_static PUBLIC ${CMAKE_BINARY_DIR})
 target_link_libraries(whatsup_static
     PUBLIC
+    Qt6::Concurrent
     Qt6::Quick
     Qt6::Qml
     Qt6::Gui
+    Qt6::Network
     Qt6::QuickControls2
     Qt6::Widgets
     Qt6::WebEngineQuick
@@ -39,6 +45,7 @@ target_link_libraries(whatsup_static
     KF6::CoreAddons
     KF6::IconThemes
     KirigamiAddonsStatefulApp
+    uap-qt::uap-qt
 )
 
 add_executable(whatsup

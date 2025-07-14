@@ -17,6 +17,10 @@
       <label>If the left global drawer be expanded or collapsed</label>
       <default>true</default>
     </entry>
+    <entry name="UAIndex" type="Int">
+      <label>Default index from the User Agents list</label>
+      <default>1</default>
+    </entry>
   </group>
   <group name="Permissions">
     <entry name="AllowMicrophone" type="bool">
