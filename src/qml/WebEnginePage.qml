@@ -10,11 +10,31 @@ import QtQuick.Layouts
 import QtQuick.Controls as Controls
 import QtWebEngine
 
+import org.kde.kirigami as Kirigami
+
 import io.github.soumyadghosh.whatsup
 
 Controls.Page {
     property alias view: webEngineView
     readonly property string originUrl: "https://web.whatsapp.com"
+
+
+    ColumnLayout {
+        anchors.centerIn: parent
+        Controls.Label {
+            text: i18n("Downloading User Agents file…")
+            visible: uaManager.isFetching
+        }
+
+        Controls.ProgressBar {
+            id: progressBar
+            indeterminate: true
+            visible: uaManager.isFetching
+        }
+    }
+
+
+
     WebEngineView {
         id: webEngineView
         focus: true
@@ -22,6 +42,7 @@ Controls.Page {
         url: originUrl
         lifecycleState: WebEngineView.LifecycleState.Active
         profile: webProfile.profile
+        visible: !uaManager.isFetching
         zoomFactor: Config.zoomFactor / 100
 
         onRenderProcessTerminated: (status, code) => {

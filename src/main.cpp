@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     }
 
     QUserAgent *userAgent = nullptr;
-    auto uaManager = new UserAgentManager();
+    auto uaManager = new UserAgentManager(true);
 
     if (uaManager->userAgents().count() > 0) {
         userAgent = uaManager->userAgents().at(config->uAIndex());

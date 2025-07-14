@@ -8,9 +8,10 @@
 
 using namespace Qt::Literals::StringLiterals;
 
-UserAgentManager::UserAgentManager(QObject *parent)
+UserAgentManager::UserAgentManager(bool start, QObject *parent)
     : QAbstractListModel(parent)
     , m_networkAccessManager(new QNetworkAccessManager(this))
+    , m_start(start)
 {
     connect(m_networkAccessManager, &QNetworkAccessManager::finished, this, &UserAgentManager::saveUserAgentsFile);
 
@@ -48,6 +49,8 @@ void UserAgentManager::saveUserAgentsFile(QNetworkReply *reply)
     if (reply->error() != QNetworkReply::NoError) {
         qDebug() << "Network Error:" << reply->errorString();
         reply->deleteLater();
+        m_isFetching = !m_isFetching;
+        Q_EMIT isFetchingChanged(m_isFetching);
         return;
     }
 
@@ -64,6 +67,8 @@ void UserAgentManager::saveUserAgentsFile(QNetworkReply *reply)
                 this,
                 [fileName, this]() {
                     Q_EMIT userAgentsChanged(u"Failed to open file:"_s.append(fileName));
+                    m_isFetching = !m_isFetching;
+                    Q_EMIT isFetchingChanged(m_isFetching);
                 },
                 Qt::QueuedConnection);
         } else {
@@ -74,6 +79,8 @@ void UserAgentManager::saveUserAgentsFile(QNetworkReply *reply)
                 this,
                 [fileName, this]() {
                     Q_EMIT userAgentsChanged(u"Saved to "_s.append(fileName));
+                    m_isFetching = !m_isFetching;
+                    Q_EMIT isFetchingChanged(m_isFetching);
                 },
                 Qt::QueuedConnection);
         }
@@ -82,14 +89,12 @@ void UserAgentManager::saveUserAgentsFile(QNetworkReply *reply)
 
 void UserAgentManager::addUserAgents(QList<QUserAgent *> userAgents)
 {
-    qDebug() << "Adding User Agents Called";
     m_userAgents.clear();
     for (auto ua : userAgents) {
         beginInsertRows(QModelIndex(), m_userAgents.count(), m_userAgents.count());
         m_userAgents.append(ua);
         endInsertRows();
     }
-    qDebug() << "Count of User Agents:" << m_userAgents.count();
 }
 
 int UserAgentManager::containsUserAgent(const QString userAgent)
@@ -109,6 +114,9 @@ QUserAgent *UserAgentManager::getUserAgent(int index)
 
 void UserAgentManager::getUserAgentsFile()
 {
+    m_isFetching = !m_isFetching;
+    Q_EMIT isFetchingChanged(m_isFetching);
+
     m_networkAccessManager->get(QNetworkRequest(QUrl("https://jnrbsn.github.io/user-agents/user-agents.json"_L1)));
 }
 
@@ -148,9 +156,19 @@ void UserAgentManager::fetchUserAgents()
             });
         });
 
-    userAgents.waitForFinished();
-    auto result = userAgents.result();
-    addUserAgents(result);
+    if (m_start) {
+        m_start = !m_start;
+        userAgents.waitForFinished();
+        auto result = userAgents.result();
+        addUserAgents(result);
+    } else {
+        QFutureWatcher<QList<QUserAgent *>> watcher;
+        connect(&watcher, &QFutureWatcher<QList<QUserAgent *>>::finished, this, [this, &watcher] {
+            auto result = watcher.result();
+            addUserAgents(result);
+        });
+        watcher.setFuture(userAgents);
+    }
 }
 
 // QUserAgent* UserAgentManager::validateUserAgent(QJsonArray *array) {

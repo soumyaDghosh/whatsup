@@ -13,11 +13,12 @@ ProfileManager::ProfileManager(QObject *parent)
 
 void ProfileManager::setProfile(const QUserAgent *agent)
 {
+    if (agent == nullptr || agent->agentString().isEmpty()) {
+        m_profile->setHttpUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"_L1);
+        return;
+    }
     if (m_profile->httpUserAgent() == agent->agentString()) {
         return;
     }
     m_profile->setHttpUserAgent(agent->agentString());
-    if (agent->agentString().isEmpty()) {
-        m_profile->setHttpUserAgent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"_L1);
-    }
 }
