@@ -6,16 +6,27 @@ import Qt.labs.platform
 import org.kde.kirigami as Kirigami
 import org.kde.kirigamiaddons.delegates as Delegates
 import org.kde.kirigamiaddons.formcard as FormCard
+import org.kde.kitemmodels as KItemModels
 
 import io.github.soumyadghosh.whatsup
 
 Kirigami.ScrollablePage {
     id: root
     title: qsTr("Download History")
+    header: Kirigami.SearchField {
+        id: filterField
+        KeyNavigation.tab: listView
+        KeyNavigation.down: listView
+        autoAccept: false
+    }
 
     ListView {
         id: listView
-        model: downloadManager
+        model: KItemModels.KSortFilterProxyModel {
+            id: filteredSnapsModel
+            sourceModel: downloadManager
+            filterString: filterField.text
+        }
         clip: true
         spacing: Kirigami.Units.largeSpacing
         currentIndex: -1
@@ -34,7 +45,7 @@ Kirigami.ScrollablePage {
             required property string fileSize
             required property string time
             required property int index
-            
+
             text: fileName
             icon.name: mimeType
             icon.width: Kirigami.Units.iconSizes.medium
@@ -60,7 +71,7 @@ Kirigami.ScrollablePage {
                     onClicked: downloadManager.open(file)
                 }
             }
-            onClicked: ListView.view.currentIndex = index;
+            onClicked: ListView.view.currentIndex = index
         }
     }
 
