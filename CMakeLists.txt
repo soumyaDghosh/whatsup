@@ -25,12 +25,14 @@ find_package(Qt6 REQUIRED COMPONENTS
     Gui
     Network
     QuickControls2
+    Sql
     Widgets
     WebEngineQuick
 )
 
 find_package(KF6 REQUIRED COMPONENTS
     Kirigami
+    KIO
     I18n
     Config
     CoreAddons

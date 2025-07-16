@@ -1,10 +1,12 @@
 #include "useragentmanager.h"
-#include <QDebug>
 #include <QFile>
 #include <QJsonArray>
 #include <QNetworkRequest>
 #include <QStandardPaths>
 #include <QtConcurrent>
+
+#include <KIO/JobUiDelegateFactory>
+#include <KIO/OpenUrlJob>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -16,6 +18,11 @@ UserAgentManager::UserAgentManager(bool start, QObject *parent)
     connect(m_networkAccessManager, &QNetworkAccessManager::finished, this, &UserAgentManager::saveUserAgentsFile);
 
     connect(this, &UserAgentManager::userAgentsChanged, this, &UserAgentManager::fetchUserAgents);
+
+    connect(&m_watcher, &QFutureWatcher<QList<QUserAgent *>>::finished, this, [this] {
+        auto result = m_watcher.result();
+        addUserAgents(result);
+    });
 
     if (QFile(m_jsonPath).exists())
         fetchUserAgents();
@@ -45,9 +52,8 @@ QVariant UserAgentManager::data(const QModelIndex &index, int role) const
 
 void UserAgentManager::saveUserAgentsFile(QNetworkReply *reply)
 {
-    qDebug() << "Save User Agents File Called";
     if (reply->error() != QNetworkReply::NoError) {
-        qDebug() << "Network Error:" << reply->errorString();
+        Q_EMIT error(u"Network Error: "_s.append(reply->errorString()));
         reply->deleteLater();
         m_isFetching = !m_isFetching;
         Q_EMIT isFetchingChanged(m_isFetching);
@@ -57,44 +63,27 @@ void UserAgentManager::saveUserAgentsFile(QNetworkReply *reply)
     QByteArray data = reply->readAll();
     reply->deleteLater();
 
-    QThreadPool::globalInstance()->start([=] {
-        QFile file(m_jsonPath);
-        QString fileName = file.fileName();
+    QFile file(m_jsonPath);
+    QString fileName = file.fileName();
 
-        if (!file.open(QIODevice::WriteOnly)) {
-            qDebug() << "Failed to open file:" << fileName;
-            QMetaObject::invokeMethod(
-                this,
-                [fileName, this]() {
-                    Q_EMIT userAgentsChanged(u"Failed to open file:"_s.append(fileName));
-                    m_isFetching = !m_isFetching;
-                    Q_EMIT isFetchingChanged(m_isFetching);
-                },
-                Qt::QueuedConnection);
-        } else {
-            file.write(data);
-            file.close();
-            qDebug() << "Saved to" << fileName;
-            QMetaObject::invokeMethod(
-                this,
-                [fileName, this]() {
-                    Q_EMIT userAgentsChanged(u"Saved to "_s.append(fileName));
-                    m_isFetching = !m_isFetching;
-                    Q_EMIT isFetchingChanged(m_isFetching);
-                },
-                Qt::QueuedConnection);
-        }
-    });
+    if (!file.open(QIODevice::WriteOnly)) {
+        m_isFetching = !m_isFetching;
+        Q_EMIT error(u"Failed to open file:"_s.append(fileName));
+        Q_EMIT isFetchingChanged(m_isFetching);
+    } else {
+        file.write(data);
+        file.close();
+        m_isFetching = !m_isFetching;
+        Q_EMIT userAgentsChanged(u"Saved to "_s.append(fileName));
+        Q_EMIT isFetchingChanged(m_isFetching);
+    }
 }
 
 void UserAgentManager::addUserAgents(QList<QUserAgent *> userAgents)
 {
-    m_userAgents.clear();
-    for (auto ua : userAgents) {
-        beginInsertRows(QModelIndex(), m_userAgents.count(), m_userAgents.count());
-        m_userAgents.append(ua);
-        endInsertRows();
-    }
+    beginResetModel();
+    m_userAgents = userAgents;
+    endResetModel();
 }
 
 int UserAgentManager::containsUserAgent(const QString userAgent)
@@ -112,6 +101,14 @@ QUserAgent *UserAgentManager::getUserAgent(int index)
     return m_userAgents.at(index);
 }
 
+void UserAgentManager::open()
+{
+    auto url = QUrl::fromLocalFile(m_jsonPath);
+    auto job = new KIO::OpenUrlJob(url);
+    job->setUiDelegate(KIO::createDefaultJobUiDelegate(KJobUiDelegate::AutoHandlingEnabled, nullptr));
+    job->start();
+}
+
 void UserAgentManager::getUserAgentsFile()
 {
     m_isFetching = !m_isFetching;
@@ -126,11 +123,13 @@ void UserAgentManager::fetchUserAgents()
 
     if (!file.exists()) {
         qWarning() << "User Agents File doesn't Exist";
+        Q_EMIT error(u"User Agents File doesn't Exist"_s);
         return;
     }
 
     if (!file.open(QIODevice::ReadOnly)) {
         qWarning() << "Failed to open file:" << file.errorString();
+        Q_EMIT error(u"Failed to open file: "_s.append(file.errorString()));
         return;
     }
 
@@ -162,17 +161,6 @@ void UserAgentManager::fetchUserAgents()
         auto result = userAgents.result();
         addUserAgents(result);
     } else {
-        QFutureWatcher<QList<QUserAgent *>> watcher;
-        connect(&watcher, &QFutureWatcher<QList<QUserAgent *>>::finished, this, [this, &watcher] {
-            auto result = watcher.result();
-            addUserAgents(result);
-        });
-        watcher.setFuture(userAgents);
+        m_watcher.setFuture(userAgents);
     }
 }
-
-// QUserAgent* UserAgentManager::validateUserAgent(QJsonArray *array) {
-//     QtConcurrent::filteredReduced(array, []{
-
-//     })
-// }

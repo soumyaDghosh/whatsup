@@ -45,7 +45,8 @@ int main(int argc, char *argv[]) {
     KAboutData::setApplicationData(about);
 
     auto *profile = new ProfileManager(&app);
-    QObject::connect(profile->getProfile(), &QQuickWebEngineProfile::downloadRequested, DownloadManager::self(), &DownloadManager::downloadFile);
+    auto downloadManager = new DownloadManager(&app);
+    QObject::connect(profile->getProfile(), &QQuickWebEngineProfile::downloadRequested, downloadManager, &DownloadManager::downloadFile);
 
     auto config = Config::self();
 
@@ -65,6 +66,7 @@ int main(int argc, char *argv[]) {
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty(QStringLiteral("webProfile"), profile);
     engine.rootContext()->setContextProperty(QStringLiteral("uaManager"), uaManager);
+    engine.rootContext()->setContextProperty(QStringLiteral("downloadManager"), downloadManager);
 
     KLocalization::setupLocalizedContext(&engine);
     engine.loadFromModule(QStringLiteral("io.github.soumyadghosh.whatsup"), QStringLiteral("Main"));

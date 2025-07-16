@@ -31,6 +31,7 @@ public:
     }
     Q_INVOKABLE int containsUserAgent(const QString userAgent);
     Q_INVOKABLE QUserAgent *getUserAgent(int index);
+    Q_INVOKABLE void open();
 
     bool isFetching() const
     {
@@ -43,10 +44,12 @@ public Q_SLOTS:
 Q_SIGNALS:
     void userAgentsChanged(QString message);
     void isFetchingChanged(bool isFetching);
+    void error(QString message);
 
 private:
     QNetworkAccessManager *m_networkAccessManager;
     QList<QUserAgent *> m_userAgents;
+    QFutureWatcher<QList<QUserAgent *>> m_watcher;
     int m_progress;
     int m_index;
     bool m_isFetching = false;

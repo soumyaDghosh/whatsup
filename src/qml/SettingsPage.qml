@@ -25,10 +25,12 @@ FormCard.FormCardPage {
 
     FormCard.FormCard {
         FormCard.FormComboBoxDelegate {
+            id: uaDelegate
             text: i18n("Select an User Agent")
             model: uaManager
             textRole: "display"
-            Component.onCompleted: {
+
+            function loadAgentStrings() {
                 var agentString = webEngineView.profile.httpUserAgent;
                 var index = uaManager.containsUserAgent(agentString);
                 if (index !== -1) {
@@ -36,6 +38,18 @@ FormCard.FormCardPage {
                 }
                 currentIndex = Config.uAIndex;
             }
+
+            Component.onCompleted: {
+                loadAgentStrings();
+            }
+
+            Connections {
+                target: uaManager
+                function onModelReset() {
+                    uaDelegate.loadAgentStrings();
+                }
+            }
+
             onActivated: idx => {
                 webProfile.setProfile(uaManager.getUserAgent(idx));
                 Config.uAIndex = idx;
@@ -48,9 +62,30 @@ FormCard.FormCardPage {
         FormCard.FormTextDelegate {
             text: i18n("Refresh User Agents List")
             icon.name: "view-refresh"
-            trailing: Controls.Button {
-                icon.name: "download"
-                onClicked: uaManager.getUserAgentsFile();
+
+            trailing: RowLayout {
+                Controls.BusyIndicator {
+                    id: busy
+                    running: true
+                    visible: uaManager.isFetching
+                    opacity: uaManager.isFetching ? 1 : 0
+                    Layout.alignment: Qt.AlignVCenter
+                }
+
+                Controls.Button {
+                    id: button
+                    icon.name: "download"
+                    onClicked: uaManager.getUserAgentsFile()
+                    visible: !uaManager.isFetching
+                    opacity: !uaManager.isFetching ? 1 : 0
+                    Layout.alignment: Qt.AlignVCenter
+                }
+
+                Behavior on visible {
+                    NumberAnimation {
+                        duration: 150
+                    }
+                }
             }
         }
 
@@ -75,10 +110,10 @@ FormCard.FormCardPage {
                     to: 500
                     stepSize: 5
                     readonly property int decimals: 2
-                    textFromValue: (v, l) => Number(v/100).toLocaleString(l, 'f', 2)
+                    textFromValue: (v, l) => Number(v / 100).toLocaleString(l, 'f', 2)
                     validator: DoubleValidator {
                         bottom: Math.min(spinbox.from, spinbox.to)
-                        top:  Math.max(spinbox.from, spinbox.to)
+                        top: Math.max(spinbox.from, spinbox.to)
                     }
                     valueFromText: (t, l) => Math.round(Number.fromLocaleString(l, t) * 100)
                     onValueChanged: {
@@ -104,7 +139,7 @@ FormCard.FormCardPage {
                 Config.save();
             }
         }
-        
+
         FormCard.FormDelegateSeparator {
             above: askDownload
             below: downloadPath
@@ -118,7 +153,7 @@ FormCard.FormCardPage {
             description: Config.downloadPath
             trailing: Controls.Button {
                 icon.name: "folder-add"
-                onClicked: folderDialog.open();
+                onClicked: folderDialog.open()
             }
         }
     }
@@ -220,7 +255,11 @@ FormCard.FormCardPage {
         target: uaManager
 
         function onUserAgentsChanged(message: string) {
-            showPassiveNotification(message, 3000);
+            showPassiveNotification(message, "short", i18n("Open File"), () => uaManager.open());
+        }
+
+        function onError(message: string) {
+            showPassiveNotification(message, "short");
         }
     }
 

@@ -114,6 +114,23 @@ Kirigami.GlobalDrawer {
             onClicked: webEngineView.zoomFactor = Config.zoomFactor / 100;
         }
 
+        Delegates.RoundedItemDelegate {
+            id: downloadsButton
+            Layout.fillWidth: true
+            checkable: true
+            Controls.ButtonGroup.group: navGroup
+            Controls.ToolTip.text: i18n("Downloads")
+            Controls.ToolTip.visible: hovered
+            text: drawerExpanded ? Controls.ToolTip.text : ""
+            icon.name: "download-later-symbolic"
+            icon.width: Kirigami.Units.iconSizes.medium
+            icon.height: Kirigami.Units.iconSizes.medium
+            onClicked: {
+                pageStack.clear();
+                pageStack.push(Qt.resolvedUrl("DownloadsPage.qml"));
+            }
+        }
+
         Item {
             Layout.fillHeight: true
         }

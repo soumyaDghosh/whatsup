@@ -11,6 +11,8 @@ target_sources(whatsup_static PRIVATE
     permissionmanager.cpp
     profilemanager.h
     profilemanager.cpp
+    sqlhelper.h
+    sqlhelper.cpp
     useragentmanager.h
     useragentmanager.cpp
 )
@@ -23,6 +25,7 @@ ecm_add_qml_module(whatsup_static
     GENERATE_PLUGIN_SOURCE
     QML_FILES
         qml/Main.qml
+        qml/DownloadsPage.qml
         qml/WhatsupDrawer.qml
         qml/SettingsPage.qml
         qml/RequestPermission.qml
@@ -38,12 +41,15 @@ target_link_libraries(whatsup_static
     Qt6::Gui
     Qt6::Network
     Qt6::QuickControls2
+    Qt6::Sql
     Qt6::Widgets
     Qt6::WebEngineQuick
     KF6::I18n
     KF6::I18nQml
     KF6::CoreAddons
     KF6::IconThemes
+    KF6::KIOCore
+    KF6::KIOFileWidgets
     KirigamiAddonsStatefulApp
     uap-qt::uap-qt
 )
