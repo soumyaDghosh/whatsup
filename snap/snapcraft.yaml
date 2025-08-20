@@ -79,3 +79,4 @@ apps:
       - camera
       - network-bind
       - screen-inhibit-control
+      - home
