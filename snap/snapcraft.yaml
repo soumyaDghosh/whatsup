@@ -14,6 +14,9 @@ website: https://invent.kde.org/soumyadghosh/whatsup
 source-code: https://invent.kde.org/soumyadghosh/whatsup
 donation: http://github.com/soumyaDghosh/sponsors
 
+platforms:
+  amd64:
+
 
 parts:
   uap-cpp:
