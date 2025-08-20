@@ -9,6 +9,7 @@ description: |
 grade: stable
 confinement: strict
 
+license: GPL-3.0-or-later
 contact: soumyadeepghosh2004+whatsup@zohomail.in
 issues: https://invent.kde.org/soumyadghosh/whatsup/-/issues
 website: https://invent.kde.org/soumyadghosh/whatsup
