@@ -1,4 +1,5 @@
 name: whatsup
+title: WhatsUp
 base: core24
 version: '0.1'
 summary: A WhatsApp wrapper using QtWebEngine, and Kirigami
