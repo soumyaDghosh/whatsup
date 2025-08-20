@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Whatsup
+GenericName=WhatsApp Client
+Comment=A WhatsApp wrapper designed to integrate with the KDE Plasma desktop
+Exec=whatsup %F
+Icon=${SNAP}/meta/gui/icon.svg
+Type=Application
+Categories=Qt;KDE;Network;InstantMessaging;
+Terminal=false
+StartupWMClass=whatsup
