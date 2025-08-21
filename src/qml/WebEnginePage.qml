@@ -45,6 +45,10 @@ Controls.Page {
         visible: !uaManager.isFetching
         zoomFactor: Config.zoomFactor / 100
 
+        onNewWindowRequested: (request) => {
+            Qt.openUrlExternally(request.requestedUrl);
+        }
+
         onRenderProcessTerminated: (status, code) => {
             if (status !== WebEngineView.NormalTerminationStatus)
                 reloadLater();
