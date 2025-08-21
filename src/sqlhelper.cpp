@@ -33,6 +33,7 @@ void SqlHelper::insertEntry(const DownloadEntry &e)
     q.addBindValue(e.mimeType);
     q.addBindValue(e.fileSize);
     q.addBindValue(e.timestamp.toString(Qt::ISODate));
+    q.exec();
 }
 
 QList<DownloadEntry> SqlHelper::loadHistory()
