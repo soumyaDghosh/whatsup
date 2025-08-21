@@ -212,7 +212,7 @@ FormCard.FormCardPage {
 
         FormCard.FormButtonDelegate {
             text: i18n("About Whatsup")
-            icon.name: "xchat"
+            icon.name: "io.github.soumyadghosh.whatsup"
             onClicked: {
                 Controls.ApplicationWindow.window.pageStack.layers.push(aboutPage);
             }

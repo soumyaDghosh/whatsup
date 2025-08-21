@@ -41,6 +41,9 @@ int main(int argc, char *argv[]) {
                      i18n("© 2025 Soumyadeep Ghosh (সৌম্যদীপ ঘোষ)"));
     about.addAuthor(i18n("Soumyadeep Ghosh (সৌম্যদীপ ঘোষ)"), i18n("Maintainer"), QStringLiteral("soumyadghosh@ubuntu.com"));
     about.setOrganizationDomain("soumyadghosh.github.io");
+    if (!qEnvironmentVariableIsSet("SNAP")) {
+        about.setDesktopFileName(QStringLiteral("io.github.soumyadghosh.whatsup"));
+    }
 
     KAboutData::setApplicationData(about);
 
