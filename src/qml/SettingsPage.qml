@@ -9,6 +9,7 @@ import QtQuick.Layouts
 import Qt.labs.platform
 
 import org.kde.kirigami as Kirigami
+import org.kde.coreaddons
 import org.kde.kirigamiaddons.formcard as FormCard
 
 import io.github.soumyadghosh.whatsup
