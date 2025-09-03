@@ -80,3 +80,4 @@ apps:
       - network-bind
       - screen-inhibit-control
       - home
+      - mpris
