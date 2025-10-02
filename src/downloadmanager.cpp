@@ -104,7 +104,7 @@ void DownloadManager::downloadFile(QWebEngineDownloadRequest *request)
 void DownloadManager::addToHistory(const DownloadEntry &entry)
 {
     beginInsertRows(QModelIndex(), m_downloads.count(), m_downloads.count());
-    m_downloads.append(entry);
+    m_downloads.prepend(entry);
     endInsertRows();
 
     SqlHelper::insertEntry(entry);
