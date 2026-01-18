@@ -18,6 +18,7 @@ donation: http://github.com/soumyaDghosh/sponsors
 
 platforms:
   amd64:
+  arm64:
 
 
 parts:
@@ -37,6 +38,10 @@ parts:
     override-build: |
       craftctl default
       install -Dm644 $CRAFT_PART_SRC/UaParser -t $CRAFT_PART_INSTALL/usr/include/uap-cpp/
+    prime:
+      - -usr/include
+      - -usr/lib/*/cmake
+      - -usr/lib/*/*.a
 
   uap-qt:
     after: [uap-cpp]
@@ -46,6 +51,9 @@ parts:
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DCMAKE_BUILD_TYPE=Release
+    prime:
+      - -usr/include
+      - -usr/lib/*/cmake
 
   whatsup:
     after: [uap-cpp, uap-qt]
@@ -55,12 +63,16 @@ parts:
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_C_FLAGS_RELEASE="-s"
+      - -DCMAKE_CXX_FLAGS_RELEASE="-s"
     override-pull: |
       craftctl default
       sed -i '/ecm_find_qmlmodule(org.kde.kirigami REQUIRED)/d' CMakeLists.txt
     stage-packages:
       - libyaml-cpp0.8
       - libre2-10
+    prime:
+      - -usr/share/doc
 
 plugs:
   shared-memory:
