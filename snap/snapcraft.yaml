@@ -33,7 +33,9 @@ parts:
       craftctl default
       ${CRAFT_STAGE}/bin/sccache --start-server
     override-prime: ""
+
   uap-cpp:
+    after: [sccache]
     plugin: cmake
     source: https://github.com/ua-parser/uap-cpp.git
     source-depth: 1
@@ -42,14 +44,16 @@ parts:
     build-packages:
       - libre2-dev
       - libyaml-cpp-dev
+    build-environment:
+      - LD_LIBRARY_PATH: /snap/kf6-core24/current/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}:${LD_LIBRARY_PATH}
     cmake-parameters:
       - -DCMAKE_C_COMPILER_LAUNCHER=sccache
       - -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DCMAKE_BUILD_TYPE=Release
       - -DBUILD_TESTS=OFF
-      - -DCMAKE_C_FLAGS_RELEASE="-s"
-      - -DCMAKE_CXX_FLAGS_RELEASE="-s"
+      - -DCMAKE_C_FLAGS="-s"
+      - -DCMAKE_CXX_FLAGS="-s"
     override-build: |
       craftctl default
       install -Dm644 $CRAFT_PART_SRC/UaParser -t $CRAFT_PART_INSTALL/usr/include/uap-cpp/
@@ -63,13 +67,15 @@ parts:
     plugin: cmake
     source: https://github.com/soumyaDghosh/uap-qt.git
     source-depth: 1
+    build-environment:
+      - LD_LIBRARY_PATH: /snap/kf6-core24/current/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}:${LD_LIBRARY_PATH}
     cmake-parameters:
       - -DCMAKE_C_COMPILER_LAUNCHER=sccache
       - -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DCMAKE_BUILD_TYPE=Release
-      - -DCMAKE_C_FLAGS_RELEASE="-s"
-      - -DCMAKE_CXX_FLAGS_RELEASE="-s"
+      - -DCMAKE_C_FLAGS="-s"
+      - -DCMAKE_CXX_FLAGS="-s"
     prime:
       - -usr/include
       - -usr/lib/*/cmake
@@ -79,11 +85,15 @@ parts:
     plugin: cmake
     source: https://invent.kde.org/soumyadghosh/whatsup.git
     source-depth: 1
+    build-packages:
+      - libevent-2.1-7t64
+    build-environment:
+      - LD_LIBRARY_PATH: /snap/kf6-core24/current/usr/lib/${CRAFT_ARCH_TRIPLET_BUILD_FOR}:${LD_LIBRARY_PATH}
     cmake-parameters:
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DCMAKE_BUILD_TYPE=Release
-      - -DCMAKE_C_FLAGS_RELEASE="-s"
-      - -DCMAKE_CXX_FLAGS_RELEASE="-s"
+      - -DCMAKE_C_FLAGS="-s"
+      - -DCMAKE_CXX_FLAGS="-s"
       - -DCMAKE_C_COMPILER_LAUNCHER=sccache
       - -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
     override-pull: |
