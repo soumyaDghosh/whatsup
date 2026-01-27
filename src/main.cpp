@@ -74,6 +74,8 @@ int main(int argc, char *argv[]) {
     KLocalization::setupLocalizedContext(&engine);
     engine.loadFromModule(QStringLiteral("io.github.soumyadghosh.whatsup"), QStringLiteral("Main"));
 
+    QObject::connect(&app, &QCoreApplication::aboutToQuit, profile, &ProfileManager::clearCache);
+
     if (engine.rootObjects().isEmpty())
         return -1;
 

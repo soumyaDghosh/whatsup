@@ -20,6 +20,7 @@ public:
     {
         return m_profile;
     }
+    void clearCache();
 
 private:
     QQuickWebEngineProfile *m_profile;

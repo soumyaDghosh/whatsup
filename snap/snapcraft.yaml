@@ -22,6 +22,17 @@ platforms:
 
 
 parts:
+  sccache:
+    plugin: dump
+    source: 
+      - on amd64: https://github.com/mozilla/sccache/releases/download/v0.13.0/sccache-v0.13.0-x86_64-unknown-linux-musl.tar.gz
+      - on arm64: https://github.com/mozilla/sccache/releases/download/v0.13.0/sccache-v0.13.0-aarch64-unknown-linux-musl.tar.gz
+    organize:
+      sccache: bin/sccache
+    override-stage: |
+      craftctl default
+      ${CRAFT_STAGE}/bin/sccache --start-server
+    override-prime: ""
   uap-cpp:
     plugin: cmake
     source: https://github.com/ua-parser/uap-cpp.git
@@ -32,9 +43,13 @@ parts:
       - libre2-dev
       - libyaml-cpp-dev
     cmake-parameters:
+      - -DCMAKE_C_COMPILER_LAUNCHER=sccache
+      - -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DCMAKE_BUILD_TYPE=Release
       - -DBUILD_TESTS=OFF
+      - -DCMAKE_C_FLAGS_RELEASE="-s"
+      - -DCMAKE_CXX_FLAGS_RELEASE="-s"
     override-build: |
       craftctl default
       install -Dm644 $CRAFT_PART_SRC/UaParser -t $CRAFT_PART_INSTALL/usr/include/uap-cpp/
@@ -49,8 +64,12 @@ parts:
     source: https://github.com/soumyaDghosh/uap-qt.git
     source-depth: 1
     cmake-parameters:
+      - -DCMAKE_C_COMPILER_LAUNCHER=sccache
+      - -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
       - -DCMAKE_INSTALL_PREFIX=/usr
       - -DCMAKE_BUILD_TYPE=Release
+      - -DCMAKE_C_FLAGS_RELEASE="-s"
+      - -DCMAKE_CXX_FLAGS_RELEASE="-s"
     prime:
       - -usr/include
       - -usr/lib/*/cmake
@@ -65,6 +84,8 @@ parts:
       - -DCMAKE_BUILD_TYPE=Release
       - -DCMAKE_C_FLAGS_RELEASE="-s"
       - -DCMAKE_CXX_FLAGS_RELEASE="-s"
+      - -DCMAKE_C_COMPILER_LAUNCHER=sccache
+      - -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
     override-pull: |
       craftctl default
       sed -i '/ecm_find_qmlmodule(org.kde.kirigami REQUIRED)/d' CMakeLists.txt

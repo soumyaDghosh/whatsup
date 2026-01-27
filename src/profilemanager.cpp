@@ -1,6 +1,7 @@
 #include "profilemanager.h"
 #include "config.h"
-#include "downloadmanager.h"
+#include <QDir>
+#include <QStandardPaths>
 
 ProfileManager::ProfileManager(QObject *parent)
     : QObject(parent)
@@ -21,4 +22,17 @@ void ProfileManager::setProfile(const QUserAgent *agent)
         return;
     }
     m_profile->setHttpUserAgent(agent->agentString());
+}
+
+void ProfileManager::clearCache()
+{
+    if (!m_profile)
+        return;
+
+    m_profile->clearHttpCache();
+
+    const QString cachePath = m_profile->cachePath();
+    if (!cachePath.isEmpty()) {
+        QDir(cachePath).removeRecursively();
+    }
 }
