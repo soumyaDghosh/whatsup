@@ -114,7 +114,7 @@ void UserAgentManager::getUserAgentsFile()
     m_isFetching = !m_isFetching;
     Q_EMIT isFetchingChanged(m_isFetching);
 
-    m_networkAccessManager->get(QNetworkRequest(QUrl("https://jnrbsn.github.io/user-agents/user-agents.json"_L1)));
+    m_networkAccessManager->get(QNetworkRequest(QUrl("https://raw.githubusercontent.com/TechfaneTechnologies/latest-user-agent/refs/heads/main/user_agents.json"_L1)));
 }
 
 void UserAgentManager::fetchUserAgents()
